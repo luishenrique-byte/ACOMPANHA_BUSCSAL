@@ -9,7 +9,9 @@ import dev.cap.buscal.dto.resquest.UsuarioRequestDto;
 import dev.cap.buscal.exception.ConflitoDeDadosException;
 import dev.cap.buscal.exception.RecursoNaoEncontradoException;
 import dev.cap.buscal.mapper.UsuarioMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,10 @@ public class UsuarioService {
 
     private final PerfilService perfilService;
 
+    private final PasswordEncoder encoder;
+
     @Transactional
-    public UsuarioResponseDto criarUsuario(UsuarioRequestDto request){
+    public UsuarioResponseDto criarUsuario(@Valid UsuarioRequestDto request){
 
         if (usuarioRepository.existsByEmail(request.email())){
             throw new ConflitoDeDadosException("Este e-mail já está em uso.");
@@ -39,6 +43,8 @@ public class UsuarioService {
         }
 
         UsuarioEntity usuario = usuarioMapper.toEntity(request, perfil);
+
+        usuario.setSenha(encoder.encode(request.senha()));
 
         return usuarioMapper.toDTO(usuarioRepository.save(usuario));
     }
@@ -80,5 +86,10 @@ public class UsuarioService {
         usuario.setPerfil(perfil);
 
         usuarioRepository.save(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existePorEmail(String email){
+        return usuarioRepository.existsByEmail(email);
     }
 }
