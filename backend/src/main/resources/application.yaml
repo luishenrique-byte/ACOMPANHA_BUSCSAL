@@ -18,7 +18,7 @@ spring:
     key: ${JWT_KEY:5P00Qvu+B0OFAKrDRikLhf46mhlwTz18UAF/E01tjYIY3m6U808DcJLkaSk6AOFQJMS7LdVLe2E5DeT8yyDCww==}
 app:
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
   bootstrap:
     admin:
       nome: ${BOOTSTRAP_ADMIN_NAME:admin}
