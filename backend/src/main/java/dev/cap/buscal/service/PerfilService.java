@@ -52,6 +52,11 @@ public class PerfilService {
     }
 
     @Transactional(readOnly = true)
+    public boolean existePerfil(UserPerfil perfil){
+        return perfilRepository.existsByPerfil(perfil);
+    }
+
+    @Transactional(readOnly = true)
     protected PerfilEntity buscarEntityPorId(Integer id){
         return  perfilRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Perfil não encontrado."));
