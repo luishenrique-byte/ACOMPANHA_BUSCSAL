@@ -3,6 +3,8 @@ package dev.cap.buscal.database.models;
 import dev.cap.buscal.database.models.ENUM.UserPerfil;
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class PerfilEntity {
+public class PerfilEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +27,9 @@ public class PerfilEntity {
 
     @OneToMany(mappedBy = "perfil")
     private List<UsuarioEntity> usuariosList;
+
+    @Override
+    public @Nullable String getAuthority() {
+        return perfil.name();
+    }
 }
