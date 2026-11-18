@@ -1,8 +1,10 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: buscsal
   datasource:
-    url: jdbc:postgresql://localhost:5432/dbBuscsal
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/dbBuscsal}
     username: ${DATABASE_USERNAME:postgres} #Variavel de Ambiente
     password: ${DATABASE_PASSWORD:12345} #Variavel de Ambiente
   jpa:
