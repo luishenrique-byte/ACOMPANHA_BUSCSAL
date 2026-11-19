@@ -1,14 +1,12 @@
 package dev.cap.buscal.handler;
 
-import dev.cap.buscal.exception.ConflitoDeDadosException;
-import dev.cap.buscal.exception.ErrorResponse;
-import dev.cap.buscal.exception.RecursoNaoEncontradoException;
-import dev.cap.buscal.exception.RegraDeNegocioException;
+import dev.cap.buscal.exception.*;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -68,6 +66,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler({CredenciaisInvalidasException.class, BadCredentialsException.class})
+    public ResponseEntity<ErrorResponse> handleCredenciaisInvalidasException(RuntimeException ex){
+        ErrorResponse response = new ErrorResponse(
+                "E-mail ou senha inválidos.",
+                HttpStatus.UNAUTHORIZED.value()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(Exception.class)
