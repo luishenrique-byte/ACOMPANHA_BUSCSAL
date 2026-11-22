@@ -5,10 +5,12 @@ import dev.cap.buscal.dto.resquest.UsuarioRequestDto;
 import dev.cap.buscal.service.PerfilService;
 import dev.cap.buscal.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class IniciarBanco implements CommandLineRunner {
@@ -37,6 +39,11 @@ public class IniciarBanco implements CommandLineRunner {
 
         Integer idPerfil = perfilService.buscarPorPerfil(UserPerfil.ADMIN).id();
 
+        if (senhaAdmin == null || senhaAdmin.isBlank()){
+            log.warn("BOOTSTRAP_ADMIN_PASSWORD não definida: Admin inicial ({}) não foi criado.", emailAdmin);
+            return;
+        }
+
         usuarioService.criarUsuario(
                 new UsuarioRequestDto(
                         nomeAdmin,
@@ -46,5 +53,7 @@ public class IniciarBanco implements CommandLineRunner {
                         idPerfil
                 )
         );
+
+        log.info("Admin inicial criado: {}", emailAdmin);
     }
 }
