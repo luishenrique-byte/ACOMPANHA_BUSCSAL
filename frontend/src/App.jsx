@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Login from './components/Login.jsx'
 import Home from './components/Home.jsx'
+import Motorista from './components/Motorista.jsx'
 
 export default function App() {
   const [usuario, setUsuario] = useState(() => {
@@ -20,7 +21,13 @@ export default function App() {
 
   return (
     <div className="app-frame">
-      {usuario ? <Home usuario={usuario} onSair={sair} /> : <Login onEntrar={entrar} />}
+      {!usuario ? (
+        <Login onEntrar={entrar} />
+      ) : usuario.tipo === 'motorista' ? (
+        <Motorista usuario={usuario} onSair={sair} />
+      ) : (
+        <Home usuario={usuario} onSair={sair} />
+      )}
     </div>
   )
 }

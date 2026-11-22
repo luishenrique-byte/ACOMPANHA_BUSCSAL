@@ -1,49 +1,46 @@
-// Dados simulados, usados só com VITE_USE_MOCK=true. Pode apagar quando o back end estiver pronto.
-const PONTOS = [
-  [-12.9580, -38.4310], [-12.9560, -38.4290], [-12.9540, -38.4272], [-12.9523, -38.4255],
-  [-12.9505, -38.4240], [-12.9488, -38.4227], [-12.9472, -38.4212], [-12.9462, -38.4200],
-  [-12.9457, -38.4188], [-12.9459, -38.4176], [-12.9466, -38.4165], [-12.9473, -38.4155],
-  [-12.9478, -38.4146], [-12.9482, -38.4137],
-]
-const CICLO_MS = 3 * 60 * 1000 // o ônibus completa o trajeto a cada 3 min (demo)
-
+// Imita o back end real (mesmos caminhos e formatos). Usado só com VITE_USE_MOCK=true.
 const espera = (ms) => new Promise((r) => setTimeout(r, ms))
 
-export async function mockLogin(matricula, perfil) {
-  await espera(600)
-  if (matricula === '000000') throw new Error('Matrícula não encontrada.')
-  return { token: 'token-mock', usuario: { nome: 'Usuário de teste', matricula, perfil } }
+const ROTA = { id: 1, nome: 'Expresso UCSal', descricao: 'Av. Paralela → Campus Pituaçu', ativa: true }
+const PARADAS = [
+  { id: 1, nome: 'Av. Paralela - Início', latitude: -12.9580, longitude: -38.4310, ordem: 1, idRota: 1 },
+  { id: 2, nome: 'Estádio de Pituaçu (sentido centro)', latitude: -12.9531, longitude: -38.4263, ordem: 2, idRota: 1 },
+  { id: 3, nome: 'Estádio de Pituaçu (sentido aeroporto)', latitude: -12.9462, longitude: -38.4200, ordem: 3, idRota: 1 },
+  { id: 4, nome: 'Av. Pinto de Aguiar', latitude: -12.9473, longitude: -38.4155, ordem: 4, idRota: 1 },
+  { id: 5, nome: 'UCSal Pituaçu', latitude: -12.9482, longitude: -38.4137, ordem: 5, idRota: 1 },
+]
+const VIAGEM = {
+  id: 1, dataHoraInicio: new Date().toISOString(), dataHoraFinal: null, status: 'EM_ROTA',
+  motorista: { id: 2, nome: 'Motorista de teste', email: 'motorista@teste.com', matricula: null, perfil: { id: 2, perfil: 'MOTORISTA' } },
+  veiculo: { id: 1, prefixo: '1234', placa: 'ABC1D23' },
+  rota: ROTA,
 }
+const CICLO_MS = 3 * 60 * 1000
 
-export async function mockRota() {
-  await espera(300)
-  return PONTOS
-}
-
-export async function mockVeiculo() {
+function posicao() {
   const f = (Date.now() % CICLO_MS) / CICLO_MS
-  const pos = f * (PONTOS.length - 1)
-  const i = Math.min(Math.floor(pos), PONTOS.length - 2)
-  const t = pos - i
-  const [a, b] = [PONTOS[i], PONTOS[i + 1]]
+  const x = f * (PARADAS.length - 1)
+  const i = Math.min(Math.floor(x), PARADAS.length - 2)
+  const t = x - i
+  const [a, b] = [PARADAS[i], PARADAS[i + 1]]
   return {
-    lat: a[0] + (b[0] - a[0]) * t,
-    lng: a[1] + (b[1] - a[1]) * t,
-    etaMinutos: Math.ceil((1 - f) * (CICLO_MS / 60000)),
-    distanciaRestanteMetros: Math.round((1 - f) * 2300),
+    id: 1, idViagem: 1, velocidade: 7, precisao: 5, dataHora: new Date().toISOString(),
+    latitude: a.latitude + (b.latitude - a.latitude) * t,
+    longitude: a.longitude + (b.longitude - a.longitude) * t,
   }
 }
 
-// Coordenadas APROXIMADAS. Em produção, o back end envia as reais.
-export async function mockParadas() {
-  await espera(300)
-  return [
-    { id: 'p1', nome: 'Estádio de Pituaçu', descricao: '1ª parada · Av. Paralela (sentido centro)', lat: -12.9531, lng: -38.4263 },
-    { id: 'p2', nome: 'Estádio de Pituaçu', descricao: '2ª parada · Av. Paralela (sentido aeroporto)', lat: -12.9525, lng: -38.4257 },
-    { id: 'p3', nome: 'UCSal · Av. Pinto de Aguiar', descricao: 'Saída (*) · em frente ao campus, sentido orla', lat: -12.9475, lng: -38.4152 },
-  ]
-}
-
-export async function mockCampus() {
-  return { nome: 'Universidade Católica do Salvador - UCSal', lat: -12.9482, lng: -38.4137 }
+export async function mockReq(caminho, { method = 'GET', body } = {}) {
+  await espera(250)
+  if (caminho === '/auth/login') {
+    if (body.senha === 'errada') throw Object.assign(new Error('E-mail ou senha inválidos.'), { status: 401 })
+    return { token: 'token-mock', expiresIn: 86400000 }
+  }
+  if (caminho === '/rota') return [ROTA]
+  if (caminho.startsWith('/ponto-parada/')) return PARADAS
+  if (caminho === '/viagem') return method === 'GET' ? [VIAGEM] : VIAGEM
+  if (caminho.startsWith('/viagem/')) return null
+  if (caminho.startsWith('/posicaoGPS/ultima/')) return posicao()
+  if (caminho === '/posicaoGPS') return null
+  throw Object.assign(new Error('Endpoint não existe no mock.'), { status: 404 })
 }
