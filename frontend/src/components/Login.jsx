@@ -31,7 +31,6 @@ export default function Login({ onEntrar }) {
   }
 
   const campo = 'w-full mt-1 mb-4 px-4 py-3 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-  const motorista = tipo === 'motorista'
 
   return (
     <div className="h-full flex flex-col justify-center px-7 bg-gradient-to-b from-indigo-600 to-indigo-800">
@@ -39,7 +38,7 @@ export default function Login({ onEntrar }) {
         <div className="text-5xl mb-2">🚌</div>
         <h1 className="text-3xl font-black">BusUCSal</h1>
         <p className="text-indigo-200 text-sm mt-1">
-          {motorista ? 'Acesso do motorista' : 'Acompanhe o expresso do campus Pituaçu'}
+          Acompanhe o expresso do campus Pituaçu
         </p>
       </div>
 
@@ -99,7 +98,7 @@ export default function Login({ onEntrar }) {
           disabled={carregando}
           className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-bold py-3 rounded-xl"
         >
-          {carregando ? 'Entrando...' : motorista ? 'Entrar como motorista' : 'Entrar'}
+          {carregando ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
     </div>

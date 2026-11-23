@@ -37,10 +37,20 @@ export async function mockReq(caminho, { method = 'GET', body } = {}) {
     return { token: 'token-mock', expiresIn: 86400000 }
   }
   if (caminho === '/rota') return [ROTA]
+  if (caminho === '/veiculo') return [
+    { id: 1, prefixo: '1234', placa: 'ABC1D23', status: 'ATIVO' },
+    { id: 2, prefixo: '5678', placa: 'XYZ9K88', status: 'ATIVO' },
+  ]
+  if (caminho === '/usuario') return [
+    { id: 2, nome: 'Motorista de teste', email: 'motorista@teste.com', matricula: null, perfil: { id: 2, perfil: 'MOTORISTA' } },
+    { id: 3, nome: 'Outro Motorista', email: 'outro@teste.com', matricula: null, perfil: { id: 2, perfil: 'MOTORISTA' } },
+    { id: 4, nome: 'Aluno de teste', email: 'aluno@teste.com', matricula: '123456789', perfil: { id: 1, perfil: 'ALUNO' } },
+  ]
   if (caminho.startsWith('/ponto-parada/')) return PARADAS
   if (caminho === '/viagem') return method === 'GET' ? [VIAGEM] : VIAGEM
   if (caminho.startsWith('/viagem/')) return null
   if (caminho.startsWith('/posicaoGPS/ultima/')) return posicao()
   if (caminho === '/posicaoGPS') return null
+  if (caminho === '/incidente') return { id: 1 }
   throw Object.assign(new Error('Endpoint não existe no mock.'), { status: 404 })
 }
