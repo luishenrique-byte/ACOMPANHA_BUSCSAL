@@ -34,6 +34,11 @@ public class PontoParadaService {
     }
 
     @Transactional(readOnly = true)
+    public List<PontoParadaResponseDto> listar(){
+        return pontoParadaMapper.toListDTO(pontoParadaRepository.findAll());
+    }
+
+    @Transactional(readOnly = true)
     public List<PontoParadaResponseDto> listarPorRota(Long idRota){
         RotaEntity rota = rotaService.buscarEntityPorId(idRota);
 
