@@ -26,5 +26,5 @@ app:
   bootstrap:
     admin:
       nome: ${BOOTSTRAP_ADMIN_NAME:admin}
-      email: ${BOOTSTRAP_ADMIN_EMAIL:admin}
+      email: ${BOOTSTRAP_ADMIN_EMAIL:admin@busucsal.com}
       senha: ${BOOTSTRAP_ADMIN_PASSWORD}

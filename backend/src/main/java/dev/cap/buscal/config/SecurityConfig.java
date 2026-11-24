@@ -65,7 +65,7 @@ public class SecurityConfig {
                         // ==========================================
                         // ROTAS COMPARTILHADAS
                         // ==========================================
-                        .requestMatchers(HttpMethod.GET,"/v1/rota/**", "/v1/ponto-parada/**", "/v1/viagem/**","/v1/posicaoGPS/**", "/v1/incidente/**", "/v1/veiculo/**").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/v1/rota/**", "/v1/ponto-parada/**", "/v1/ponto-parada", "/v1/viagem/**","/v1/posicaoGPS/**", "/v1/incidente/**", "/v1/veiculo/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

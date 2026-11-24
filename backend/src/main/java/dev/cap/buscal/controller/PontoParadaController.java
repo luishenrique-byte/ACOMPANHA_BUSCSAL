@@ -23,6 +23,12 @@ public class PontoParadaController {
         return pontoParadaService.cadastrar(request);
     }
 
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public List<PontoParadaResponseDto> listar(){
+        return pontoParadaService.listar();
+    }
+
     @GetMapping("/{idRota}")
     @ResponseStatus(HttpStatus.OK)
     public List<PontoParadaResponseDto> listarPorRota(@PathVariable Long idRota){
