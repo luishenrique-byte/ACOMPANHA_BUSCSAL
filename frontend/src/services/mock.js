@@ -46,7 +46,7 @@ export async function mockReq(caminho, { method = 'GET', body } = {}) {
     { id: 3, nome: 'Outro Motorista', email: 'outro@teste.com', matricula: null, perfil: { id: 2, perfil: 'MOTORISTA' } },
     { id: 4, nome: 'Aluno de teste', email: 'aluno@teste.com', matricula: '123456789', perfil: { id: 1, perfil: 'ALUNO' } },
   ]
-  if (caminho.startsWith('/ponto-parada/')) return PARADAS
+  if (caminho === '/ponto-parada' || caminho.startsWith('/ponto-parada/')) return PARADAS
   if (caminho === '/viagem') return method === 'GET' ? [VIAGEM] : VIAGEM
   if (caminho.startsWith('/viagem/')) return null
   if (caminho.startsWith('/posicaoGPS/ultima/')) return posicao()

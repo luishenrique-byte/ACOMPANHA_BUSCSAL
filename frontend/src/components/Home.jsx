@@ -33,11 +33,12 @@ export default function Home({ usuario, onSair }) {
       .catch((e) => setErro(e.message))
   }, [])
 
-  // Pontos de parada: recarrega de tempos em tempos (só troca o estado se algo mudou)
+  // Pontos de parada: busca todos os pontos registrados e recarrega de tempos em tempos (só troca o estado se algo mudou)
   useEffect(() => {
     if (rotaId == null) return
     const carregar = () =>
-      api.buscarParadas(rotaId)
+      // api.buscarParadas(rotaId) // só os pontos de uma rota
+      api.buscarTodasParadas() // todos os pontos registrados
         .then((novas) => setParadas((atual) => (JSON.stringify(atual) === JSON.stringify(novas) ? atual : novas)))
         .catch((e) => setErro(e.message))
     carregar()
