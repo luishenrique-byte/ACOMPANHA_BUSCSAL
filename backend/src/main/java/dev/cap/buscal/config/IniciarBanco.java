@@ -104,7 +104,7 @@ public class IniciarBanco implements CommandLineRunner {
     }
 
     private void criarVeiculo(){
-        if (veiculoService.listarTodos().stream()
+        if (!veiculoService.listarTodos().stream()
                 .filter(v -> v.status().equals(StatusOnibus.ATIVO))
                 .toList().isEmpty()) return;
         veiculoService.cadastrar(
