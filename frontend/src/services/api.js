@@ -4,6 +4,7 @@
  *   POST  /auth/login                 { email, senha } -> { token, expiresIn }
  *   GET   /rota                       -> [{ id, nome, descricao, ativa }]               (rotas ativas)
  *   GET   /ponto-parada/:idRota       -> [{ id, nome, latitude, longitude, ordem }]
+ *   GET   /ponto-parada               -> [{ id, nome, latitude, longitude, ordem }]   (todos os pontos cadastrados)
  *   GET   /viagem                     -> viagens EM_ROTA [{ id, motorista, veiculo, rota, ... }]
  *   GET   /posicaoGPS/ultima/:idViagem-> { latitude, longitude, velocidade, precisao, dataHora }   (404 = sem posição)
  *   GET   /veiculo                    -> [{ id, prefixo, placa, status }]   (AINDA NÃO EXISTE no back: pedir ao Luis)
@@ -15,6 +16,12 @@
 import { mockReq } from './mock.js'
 
 const cacheTrajeto = new Map()
+
+// Converte os pontos do back (latitude/longitude) para o formato do front (lat/lng), na ordem certa
+const paraParadas = (lista) =>
+  [...lista]
+    .sort((a, b) => a.ordem - b.ordem)
+    .map((p) => ({ id: p.id, nome: p.nome, ordem: p.ordem, descricao: `Parada ${p.ordem}`, lat: p.latitude, lng: p.longitude }))
 
 const BASE = import.meta.env.VITE_API_URL
 const USAR_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
@@ -62,11 +69,14 @@ export const api = {
 
   listarRotas: () => chamar('/rota'),
 
+  // GET /ponto-parada/:idRota -> pontos de uma rota
   async buscarParadas(rotaId) {
-    const lista = await chamar(`/ponto-parada/${rotaId}`)
-    return [...lista]
-      .sort((a, b) => a.ordem - b.ordem)
-      .map((p) => ({ id: p.id, nome: p.nome, ordem: p.ordem, descricao: `Parada ${p.ordem}`, lat: p.latitude, lng: p.longitude }))
+    return paraParadas(await chamar(`/ponto-parada/${rotaId}`))
+  },
+
+  // GET /ponto-parada -> todos os pontos registrados
+  async buscarTodasParadas() {
+    return paraParadas(await chamar('/ponto-parada'))
   },
 
   async buscarViagemAtiva(rotaId) {
